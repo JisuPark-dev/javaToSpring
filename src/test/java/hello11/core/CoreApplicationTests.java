@@ -4,6 +4,7 @@ import hello11.core.member.Grade;
 import hello11.core.member.Member;
 import hello11.core.member.MemberService;
 import hello11.core.member.MemberServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -12,7 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 
 class CoreApplicationTests {
-	MemberService memberService = new MemberServiceImpl();
+	MemberService memberService;
+
+	@BeforeEach
+	public void beforeEach() {
+		AppConfig appConfig = new AppConfig();
+		memberService = appConfig.memberService();
+	}
+
 
 	@Test
 	void sameTest() {

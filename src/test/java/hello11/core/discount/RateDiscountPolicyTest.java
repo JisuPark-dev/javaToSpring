@@ -1,43 +1,49 @@
-package hello11.core.Order;
+package hello11.core.discount;
 
 import hello11.core.AppConfig;
-import hello11.core.discount.DiscountPolicy;
-import hello11.core.discount.FixDiscountPolicy;
-import hello11.core.member.*;
+import hello11.core.member.Grade;
+import hello11.core.member.Member;
+import hello11.core.member.MemberService;
+import hello11.core.member.MemberServiceImpl;
 import hello11.core.order.Order;
 import hello11.core.order.OrderService;
 import hello11.core.order.OrderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Or;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class OrderTest {
+class RateDiscountPolicyTest {
 
+    DiscountPolicy rateDiscountPolicy = new RateDiscountPolicy();
     MemberService memberService;
     OrderService orderService;
-    DiscountPolicy discountPolicy = new FixDiscountPolicy();
+
+    AppConfig appConfig = new AppConfig();
+
     @BeforeEach
     public void beforeEach() {
         AppConfig appConfig = new AppConfig();
         memberService = appConfig.memberService();
         orderService = appConfig.orderService();
     }
+
     @Test
-    void discountTest() {
+    @DisplayName("VIP고객에게는 10%할인이 적용되어야 한다.")
+    void discountTest(){
         //given
         Member member = new Member(1L, "jisu", Grade.Vip);
         memberService.joinMember(member);
         Order order = orderService.createOrder(1L, "item1", 10000);
         //when
-        int discountedPrice = discountPolicy.discount(member, 10000);
 
+        int discount = rateDiscountPolicy.discount(member, 20000);
         //then
-        assertEquals(order.getDiscountPrice(),1000);
-        assertEquals(order.calculatePrice(),9000);
+        assertEquals(discount, 2000);
     }
+
 
 }
