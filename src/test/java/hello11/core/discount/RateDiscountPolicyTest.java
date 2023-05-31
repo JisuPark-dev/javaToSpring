@@ -12,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,10 +27,15 @@ class RateDiscountPolicyTest {
     AppConfig appConfig = new AppConfig();
 
     @BeforeEach
+//    public void beforeEach() {
+//        AppConfig appConfig = new AppConfig();
+//        memberService = appConfig.memberService();
+//        orderService = appConfig.orderService();
+//    }
     public void beforeEach() {
-        AppConfig appConfig = new AppConfig();
-        memberService = appConfig.memberService();
-        orderService = appConfig.orderService();
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+        memberService = applicationContext.getBean("memberService", MemberService.class);
+        orderService = applicationContext.getBean("orderService", OrderService.class);
     }
 
     @Test
@@ -38,9 +45,10 @@ class RateDiscountPolicyTest {
         Member member = new Member(1L, "jisu", Grade.Vip);
         memberService.joinMember(member);
         Order order = orderService.createOrder(1L, "item1", 10000);
-        //when
 
+        //when
         int discount = rateDiscountPolicy.discount(member, 20000);
+
         //then
         assertEquals(discount, 2000);
     }
