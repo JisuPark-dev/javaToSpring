@@ -15,4 +15,8 @@ public class SingletonService {
 
     }
 
+    public void logic() {
+        System.out.println("singleton Logic");
+    }
+
 }
